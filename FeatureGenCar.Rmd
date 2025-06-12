@@ -1,0 +1,97 @@
+---
+title: "FeatureEngineeringCar"
+author: "Andy"
+date: "2025-06-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(moments)
+
+# File paths
+root <- "C:/Users/chestovi/Downloads"
+start_directory <- "60SplitsCorrectedCSVs"
+end_directory <- "60SplitsCorrectedCSVs_carReduced"
+```
+
+```{r}
+# storing all the files 
+files <- list.files(file.path(root, start_directory))
+num_files = length(files)
+```
+
+```{r}
+# looping through files for generating features from data 
+for(i in 1:num_files){
+  #read specific file
+  data = read.csv(file.path(root, start_directory, files[i]))
+  data = as.data.frame(data)
+  
+  data1 <- data %>%
+    group_by(id1)%>%
+    summarize(ID = unique(id1),
+              Treat = unique(Condition), 
+              Status = unique(status),
+              n = 3600, 
+              #speed
+              avg_speed = mean(VDS.Veh.Speed, na.rm = TRUE), 
+              q95_speed = quantile(VDS.Veh.Speed, .95, na.rm = TRUE), 
+              q5_speed = quantile(VDS.Veh.Speed, .05, na.rm = TRUE), 
+              kurt_speed = kurtosis(VDS.Veh.Speed, na.rm = TRUE),
+              sd_speed = sd(VDS.Veh.Speed, na.rm = TRUE),
+              skew_speed = skewness(VDS.Veh.Speed, na.rm = TRUE), 
+              middle_90_speed = q95_speed - q5_speed, 
+              #breaking
+              avg_breaking = mean(CFS.Brake.Pedal.Force, na.rm = TRUE),
+              q95_breaking = quantile(CFS.Brake.Pedal.Force, .95, na.rm = TRUE), 
+              q5_breaking = quantile(CFS.Brake.Pedal.Force, .05, na.rm = TRUE), 
+              #kurt_breaking = kurtosis(CFS.Brake.Pedal.Force, na.rm = TRUE), 
+              #skew_breaking = skewness(CFS.Brake.Pedal.Force, na.rm = TRUE), 
+              sd_breaking = sd(CFS.Brake.Pedal.Force, na.rm = TRUE),
+              middle_90_breaking = q95_breaking - q5_breaking, 
+              #steer angle
+              avg_steer_angle = mean(CFS.Steering.Wheel.Angle, na.rm = TRUE),
+              q95_steer_angle = quantile(CFS.Steering.Wheel.Angle, .95, na.rm = TRUE), 
+              q5_steer_angle = quantile(CFS.Steering.Wheel.Angle, .05, na.rm = TRUE), 
+              kurt_steer_angle = kurtosis(CFS.Steering.Wheel.Angle, na.rm = TRUE), 
+              sd_steer_angle = sd(CFS.Steering.Wheel.Angle, na.rm = TRUE), 
+              skew_steer_angle = skewness(CFS.Steering.Wheel.Angle, na.rm = TRUE), 
+              middle_90_steer_ang = q95_steer_angle - q5_steer_angle, 
+              #steer angle rate
+              avg_steer_angle_rate = mean(CFS.Steering.Wheel.Angle.Rate, na.rm = TRUE),
+              q95_steer_angle_rate = quantile(CFS.Steering.Wheel.Angle.Rate, .95, na.rm = TRUE), 
+              q5_steer_angle_rate = quantile(CFS.Steering.Wheel.Angle.Rate, .05, na.rm = TRUE), 
+              kurt_steer_angle_rate = kurtosis(CFS.Steering.Wheel.Angle.Rate, na.rm = TRUE), 
+              sd_steer_angle_rate = sd(CFS.Steering.Wheel.Angle.Rate, na.rm = TRUE), 
+              skew_steer_angle_rate = skewness(CFS.Steering.Wheel.Angle.Rate, na.rm = TRUE), 
+              middle_90_steer_angle_rate = q95_steer_angle_rate - q5_steer_angle_rate,
+              # stdev lane dev
+              avg_lane_dev = mean(LaneDev2, na.rm = TRUE), 
+              q95_lane_dev = quantile(LaneDev2, .95, na.rm = TRUE), 
+              q5_lane_dev = quantile(LaneDev2, .05, na.rm = TRUE), 
+              kurt_lane_dev = kurtosis(LaneDev2, na.rm = TRUE), 
+              sd_lane_dev = sd(LaneDev2, na.rm = TRUE), 
+              skew_lane_dev = skewness(LaneDev2, na.rm = TRUE), 
+              middle_90_lane_dev = q95_lane_dev - q5_lane_dev,
+              #accelerator
+              avg_accel = mean(CFS.Accelerator.Pedal.Position, na.rm = TRUE), 
+              q95_accel = quantile(CFS.Accelerator.Pedal.Position, .95, na.rm = TRUE), 
+              q5_accel = quantile(CFS.Accelerator.Pedal.Position, .05, na.rm = TRUE), 
+              kurt_accel = kurtosis(CFS.Accelerator.Pedal.Position, na.rm = TRUE), 
+              sd_accel = sd(CFS.Accelerator.Pedal.Position, na.rm = TRUE), 
+              skew_accel = skewness(CFS.Accelerator.Pedal.Position, na.rm = TRUE), 
+              middle_90_accel = q95_accel - q5_accel, 
+              # lane deviations (went outside lane)
+              no_deviations = sum(SCC.Lane.Deviation, na.rm = TRUE))
+    
+
+
+write.csv(data1, file.path(root, end_directory, files[i]))
+print(i)
+}
+```
