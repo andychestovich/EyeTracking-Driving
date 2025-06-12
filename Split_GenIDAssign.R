@@ -28,7 +28,7 @@ add_sample_idx = function(data, len = 3600){
 make_ids = function(data1){
   final <- data1 %>%
     # create ID with subject ID of driver, the split, and their impairment status
-    mutate(id1 = paste0(data1$Subject,"_",data1$Sample_ID,"_",data1$Treat))
+    mutate(id1 = paste0(data1$Subject,"_",data1$Sample_ID,"_",data1$Treat, "_", data1$Condition))
   
   return(final)
 }
@@ -37,8 +37,8 @@ make_ids = function(data1){
 root <- "C:/Users/chestovi/Downloads"
 
 # will get by looping through files
-start_directory <- "NotSplit_assignedCSV"
-end_directory <- "Split_assignedCSV"
+start_directory <- "correctedcsvs"
+end_directory <- "Split_assignedCorrectedCSVs"
 
 #getting files
 files <- list.files(file.path(root, start_directory))
@@ -68,7 +68,7 @@ for(i in 1:num_files){
     #assign treatment
     mutate(Treat = substring(data$DaqName, 13, 14))%>%
     #filter rural straight (double check)
-    filter(SCC.LogStreams == 22)
+    filter(LogStreams2 == 311)
   
   # if data isn't big enough, print the problematic file name 
   if(nrow(data) < 3600){
@@ -76,13 +76,13 @@ for(i in 1:num_files){
   }
   else{
     # running all the functions in a pipe 
-    test <- data %>%
-      add_sample_idx()%>%
-      make_ids()%>%
-      mutate(status = train_list[i])
-    
-    write.csv(test, file.path(root, end_directory, files[i]))
+  test <- data %>%
+    add_sample_idx()%>%
+    make_ids()%>%
+    mutate(status = train_list[i])
+  
+  write.csv(test, file.path(root, end_directory, files[i]))
   }
   # print after each loop to track progress
-  print(i - 1)
+  print(i)
 }
