@@ -3,6 +3,7 @@ library(dplyr)
 library(tidyverse)
 
 # function to add splits 
+# change length as per window size
 add_sample_idx = function(data, len = 3600){
   
   l = nrow(data)
@@ -24,21 +25,24 @@ add_sample_idx = function(data, len = 3600){
   }
 }
 
+
 # function to make distinct IDs for data
 make_ids = function(data1){
   final <- data1 %>%
     # create ID with subject ID of driver, the split, and their impairment status
-    mutate(id1 = paste0(data1$Subject,"_",data1$Sample_ID,"_",data1$Treat, "_", data1$Condition))
+    mutate(id1 = paste0(data1$Subject,"_",data1$Sample_ID,"_",data1$Treat))
   
   return(final)
 }
 
+
 #root directory 
-root <- "C:/Users/chestovi/Downloads"
+root <- "root/path"
 
 # will get by looping through files
 start_directory <- "correctedcsvs"
-end_directory <- "Split_assignedCorrectedCSVs"
+end_directory <- "60Split_assignedCorrectedCSVs"
+
 
 #getting files
 files <- list.files(file.path(root, start_directory))
@@ -53,8 +57,19 @@ nv = num_files - nt
 
 # generating list with number of training and validation needed 
 train_list <- c(rep("t", nt), rep("v", nv))
+
 #shuffle
-train_list <- sample(train_list)
+set.seed(1234)
+train_list1 <- sample(train_list)
+train_list2 <- sample(train_list)
+train_list3 <- sample(train_list)
+train_list4 <- sample(train_list)
+train_list5 <- sample(train_list)
+train_list6 <- sample(train_list)
+train_list7 <- sample(train_list)
+train_list8 <- sample(train_list)
+train_list9 <- sample(train_list)
+train_list10 <- sample(train_list)
 
 test <- NULL
 
@@ -65,24 +80,25 @@ for(i in 1:num_files){
   data <- data %>%
     # get rid of duplicate column
     select(- X) %>%
-    #assign treatment
-    mutate(Treat = substring(data$DaqName, 13, 14))%>%
     #filter rural straight (double check)
     filter(LogStreams2 == 311)
   
   # if data isn't big enough, print the problematic file name 
+  #error checking
   if(nrow(data) < 3600){
-    print(train_list[i - 1])
+    print(paste0("Didn't work", i))
   }
   else{
     # running all the functions in a pipe 
-  test <- data %>%
-    add_sample_idx()%>%
-    make_ids()%>%
-    mutate(status = train_list[i])
-  
-  write.csv(test, file.path(root, end_directory, files[i]))
+    test <- data %>%
+      add_sample_idx()%>%
+      make_ids()%>%
+      mutate(status1 = train_list[i], status2 = train_list2[i], status3 = train_list3[i], status4 = train_list4[i], status5 = train_list5[i], status6 = train_list6[i], status7 = train_list7[i], status8 = train_list8[i], status9 = train_list9[i], status10 = train_list10[i])
+    
+    write.csv(test, file.path(root, end_directory, files[i]))
   }
   # print after each loop to track progress
   print(i)
 }
+
+
