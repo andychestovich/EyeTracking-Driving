@@ -1,43 +1,41 @@
----
-title: "FeatureEngineeringCar"
-author: "Andy"
-date: "2025-06-03"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r}
 library(dplyr)
 library(moments)
 
 # File paths
-root <- "C:/Users/chestovi/Downloads"
+root <- "root/path"
 start_directory <- "60SplitsCorrectedCSVs"
 end_directory <- "60SplitsCorrectedCSVs_carReduced"
-```
 
-```{r}
 # storing all the files 
 files <- list.files(file.path(root, start_directory))
 num_files = length(files)
-```
 
-```{r}
+
 # looping through files for generating features from data 
 for(i in 1:num_files){
   #read specific file
   data = read.csv(file.path(root, start_directory, files[i]))
   data = as.data.frame(data)
   
+  # creating the id variable
+  data <- data%>%
+    mutate(id1 = paste0(id1, substr(DaqName,13,14)))
+  
   data1 <- data %>%
     group_by(id1)%>%
     summarize(ID = unique(id1),
               Treat = unique(Condition), 
-              Status = unique(status),
-              n = 3600, 
+              Status1 = unique(status1),
+              Status2 = unique(status2),
+              Status3 = unique(status3),
+              Status4 = unique(status4),
+              Status5 = unique(status5),
+              Status6 = unique(status6),
+              Status7 = unique(status7),
+              Status8 = unique(status8),
+              Status9 = unique(status9),
+              Status10 = unique(status10),
+              n = 3600, # change according to time interval 
               #speed
               avg_speed = mean(VDS.Veh.Speed, na.rm = TRUE), 
               q95_speed = quantile(VDS.Veh.Speed, .95, na.rm = TRUE), 
@@ -85,13 +83,10 @@ for(i in 1:num_files){
               kurt_accel = kurtosis(CFS.Accelerator.Pedal.Position, na.rm = TRUE), 
               sd_accel = sd(CFS.Accelerator.Pedal.Position, na.rm = TRUE), 
               skew_accel = skewness(CFS.Accelerator.Pedal.Position, na.rm = TRUE), 
-              middle_90_accel = q95_accel - q5_accel, 
-              # lane deviations (went outside lane)
-              no_deviations = sum(SCC.Lane.Deviation, na.rm = TRUE))
-    
-
-
-write.csv(data1, file.path(root, end_directory, files[i]))
-print(i)
+              middle_90_accel = q95_accel - q5_accel)
+  
+  
+  
+  write.csv(data1, file.path(root, end_directory, files[i]))
+  print(i)
 }
-```
