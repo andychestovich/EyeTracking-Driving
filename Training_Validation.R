@@ -1,5 +1,5 @@
 # root directory (replace with your own)
-root <- "C:/Users/chestovi/Downloads"
+root <- "root/path"
 
 #starting and ending directory for reading and writing files
 start_dir <- "60Second_overlap_reduced"
