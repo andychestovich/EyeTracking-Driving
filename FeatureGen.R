@@ -7,7 +7,7 @@ library("devtools")
 install_github("tmalsburg/saccades/saccades", dependencies=TRUE, force = TRUE)
 library(saccades)
 # File paths
-root <- "C:/Users/chestovi/Downloads/"
+root <- "root/path"
 start_directory <- "45SplitsCorrectedCSVs"
 end_directory <- "45Splits_eyeReduced_saccades_Test"
 
