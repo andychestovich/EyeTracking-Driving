@@ -340,8 +340,7 @@ for(i in 1:length(files2)){
 
 unique_eye <- unique(eye_results$sample_ID)
 
-```
-```{r}
+
 veh_results <- NULL
 for(i in 1:1){
   list_files <- list.files(file.path(dir,files[i]))
@@ -352,13 +351,9 @@ for(i in 1:1){
     veh_results <- rbind(veh_results, data)
   }
 }
-```
 
-```{r}
-data <- read_excel("C:/Users/satavans/Downloads/kss_RTD.xlsx")
-```
+data <- read_excel("kss_RTD.xlsx")
 
-```{r}
 subject_no <- numeric(length(veh_results))
 scenario <- numeric(length(veh_results))
 sample_Id = veh_results$sample_ID
@@ -378,9 +373,7 @@ data <- data%>%
 
 comb <- veh_results1 %>%
   left_join(data, by = c("subject_no", "scenario"))
-```
 
-```{r}
 comb_results <- comb %>%
   filter(target == 1)%>%
   group_by(rtd)%>%
@@ -409,32 +402,31 @@ crive_kss_results <- comb%>%
   summarize(
     avg_kss = mean(csra_kss_score, na.rm = TRUE)
   )
-```
 
 
-```{r}
+
+
 ggplot(comb_results, aes(x = as.factor(rtd), y = prob ))+
   geom_col()+
   labs(x = "Ready to drive", y = "Proportion classified as impaired", caption = "1 for ready, 0 for not ready", title = "Classification of Impaired Drivers Based on their Readiness to Drive")
-```
 
 
-```{r}
+
 ggplot(kss_results, aes(x = csra_kss_score, y = prob))+
   geom_col()+
   scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9,10)) + 
   labs(y = "Proportion classified as impaired", x = "KSS Score(Fatigue rating)", title ="Classification of all Drivers based on their KSS Scores ", caption = "1 for no fatigue and 9 for very tired")
-```
 
-```{r}
+
+
 ggplot(drive_no_results, aes(x = `Drive No`, y = prob ))+
   geom_col()+
   labs(y = "Proportion classified as impaired", x = "Drive Number", title ="Classification of all Drivers based on their Drive Number ", caption = "1 for placebo drive and 2,3,4,5 for impaired drives")
-```
 
-```{r}
+
+
 ggplot(crive_kss_results, aes(x = `Drive No`, y = avg_kss))+
   geom_col()+
   labs(y = "Average KSS Score", x = "Drive Number", title ="Average KSS Score for drivers during their different Drives", caption = "1 for placebo drive and 2,3,4,5 for impaired drives")
-```
+
 
